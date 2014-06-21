@@ -1,0 +1,45 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace ZombieDice
+{
+    class YellowZombieDie: IZombieDie // 1-2 = shot, 3-4 = runner, 5-6 = brain 
+    {
+        #region Properties
+        private Random Rand;
+        public int Roll; // TODO: change to private once testing is done
+        #endregion
+
+        #region Constructors
+        public YellowZombieDie()
+        {
+        }
+        public YellowZombieDie(Random rand)
+        {
+            Rand = rand;
+            Console.WriteLine(ToString());
+        }
+        #endregion
+
+        #region Methods
+        public ZombieDieValue RollDie()
+        {
+            Roll = Rand.Next(1, 7);
+            if (Roll <= 2)
+                return ZombieDieValue.Shot;
+            else if (Roll <= 4)
+                return ZombieDieValue.Runner;
+            else
+                return ZombieDieValue.Brain;
+        }
+
+        public override string ToString()
+        {
+            return "Yellow";
+        }
+        #endregion
+    }
+}

@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace ZombieDice
 {
-    interface IZombieDie
+    enum ZombieDieColor
     {
-        ZombieDieValue RollDie();
-        ZombieDieColor DieType();
-        void DisplayType();
+        Green,
+        Yellow,
+        Red
     }
 }

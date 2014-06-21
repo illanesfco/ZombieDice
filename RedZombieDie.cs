@@ -22,7 +22,7 @@ namespace ZombieDice
         public RedZombieDie(Random rand)
         {
             Rand = rand;
-            Console.WriteLine(ToString());
+            //DisplayType();
         }
         #endregion
 
@@ -38,9 +38,14 @@ namespace ZombieDice
                 return ZombieDieValue.Brain;
         }
 
-        public override string ToString()
+        public ZombieDieColor DieType()
         {
-            return "Red";
+            return ZombieDieColor.Red;
+        }
+
+        public void DisplayType()
+        {
+            Console.WriteLine("Red");
         }
         #endregion
     }

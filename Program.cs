@@ -12,11 +12,21 @@ namespace ZombieDice
 
         static void Main(string[] args)
         {
+            bool gameOver = false;
             Program myApp = new Program();
             Random rand = new Random();
-            List<IZombieDie> testcup = myApp.CupSetup();
+            List<IZombieDie> cup = myApp.CupSetup();
             myApp.TestDice();
             List<ZombieDicePlayer> players = myApp.PlayerSetup();
+
+            myApp.RunGame(cup, players);
+
+            /*while (gameOver == false)
+            {
+                
+            }*/
+
+
             Console.WriteLine("Press any key to continue...");
             Console.ReadLine();
         
@@ -81,6 +91,7 @@ namespace ZombieDice
             Console.WriteLine("Green Dice: " + greenDice);
             Console.WriteLine("Yellow Dice: " + yellowDice);
             Console.WriteLine("Red Dice: " + redDice);
+            Console.WriteLine("Total Dice: " + cup.Count);
             Console.WriteLine();
         }
 
@@ -102,15 +113,70 @@ namespace ZombieDice
                 newPlayer = new ZombieDicePlayer(Console.ReadLine());
                 playerList.Add(newPlayer);
             }
-            DeclarePlayers(playerList);
+            //DeclarePlayers(playerList);
+            Console.WriteLine();
             return playerList;
         }
 
         public void DeclarePlayers(List<ZombieDicePlayer> playerList) // tells you the names of each player in the game
         {
             foreach (ZombieDicePlayer player in playerList)
-                player.DisplayName();
+                Console.WriteLine(player.giveName());
+
+            Console.WriteLine("Total Players: " + playerList.Count);
         }
 
+        public void RunGame(List<IZombieDie> cup, List<ZombieDicePlayer> players)
+        {
+            int brainsRolled = 0;
+            int runnersRolled = 0;
+            int shotsRolled = 0;
+            List<IZombieDie> playerDice = new List<IZombieDie>(); // collection of the three dice player will roll
+            IZombieDie tempDie;
+            int seed;
+
+            foreach (ZombieDicePlayer player in players)
+            {
+                Console.WriteLine(player.giveName() + "'s Turn: ");
+
+                Console.WriteLine("Taking dice from cup: "); // TODO: think of a way to do this more cleanly
+                for (int i = 0; i < 3; i++) // take three dice from the cup
+                {
+                    seed = Rand.Next(0, cup.Count);
+                    //Console.WriteLine(seed);
+                    tempDie = cup.ElementAt(seed); // assign a random die from the cup as the die to roll
+                    cup.RemoveAt(seed); // remove the die from the cup
+                    playerDice.Add(tempDie);
+                }
+                foreach (IZombieDie die in playerDice)
+                    die.DisplayType();
+
+                Console.WriteLine("Rolling dice...");
+                foreach (IZombieDie die in playerDice) // roll and "score" each die 
+                {
+                    die.RollDie();
+                    if (die.GetValueRolled() == ZombieDieValue.Brain)
+                    {
+                        brainsRolled++; 
+                        playerDice.Remove(die);
+                    }
+                    else if (die.GetValueRolled() == ZombieDieValue.Shot)
+                    {
+                        shotsRolled++;
+                        playerDice.Remove(die);
+                    }
+                    else // runner dice are not discarded
+                        runnersRolled++;
+                }
+                Console.WriteLine("Brains: " + brainsRolled + "\t Shots: " + shotsRolled + "\t Runners: " + runnersRolled);
+
+                //clear data for next player
+                brainsRolled = 0;
+                shotsRolled = 0;
+                runnersRolled = 0;
+                playerDice.Clear();
+                Console.WriteLine();
+            }
+        }
     }
 }

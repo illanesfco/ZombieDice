@@ -24,9 +24,9 @@ namespace ZombieDice
         #endregion
 
         #region Methods
-        public void DisplayName()
+        public string giveName()
         {
-            Console.WriteLine(Name);
+            return Name;
         }
 
         public void AddToBank(int brains) // Adds brains accrued during a player's turn to their score.

@@ -10,6 +10,7 @@ namespace ZombieDice
     {
         ZombieDieValue RollDie();
         ZombieDieColor DieType();
+        ZombieDieValue GetValueRolled();
         void DisplayType();
     }
 }

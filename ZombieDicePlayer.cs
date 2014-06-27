@@ -42,6 +42,11 @@ namespace ZombieDice
                 return true;
             else return false;
         }
+
+        public void DisplayInfo()
+        {
+            Console.WriteLine(Name + " has " + Score + " brains scored.");
+        }
         #endregion
     }
 }

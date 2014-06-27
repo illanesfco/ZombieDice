@@ -10,7 +10,7 @@ namespace ZombieDice
     {
         #region Properties
         private Random Rand;
-        public int Roll; // TODO: change to private once testing is done
+        private int Roll; 
         private ZombieDieValue ValueRolled;
         #endregion
 

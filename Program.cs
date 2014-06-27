@@ -9,6 +9,7 @@ namespace ZombieDice
     class Program
     {
         private static Random Rand = new Random();
+        private List<IZombieDie> testPlayerDice = new List<IZombieDie>();
 
         static void Main(string[] args)
         {
@@ -16,7 +17,7 @@ namespace ZombieDice
             Program myApp = new Program();
             Random rand = new Random();
             List<IZombieDie> cup = myApp.CupSetup();
-            myApp.TestDice();
+            //myApp.TestDice();
             List<ZombieDicePlayer> players = myApp.PlayerSetup();
 
             myApp.RunGame(cup, players);
@@ -27,12 +28,12 @@ namespace ZombieDice
             }*/
 
 
-            Console.WriteLine("Press any key to continue...");
+            Console.WriteLine("Press any key to quit...");
             Console.ReadLine();
         
         }
 
-        public void TestDice()
+        /*public void TestDice()
         {
             Console.WriteLine("Testing Dice...");
             Console.WriteLine();
@@ -48,7 +49,7 @@ namespace ZombieDice
             }
             Console.WriteLine("...done");
             Console.WriteLine();
-        }
+        }*/
 
         public List<IZombieDie> CupSetup()
         {
@@ -134,16 +135,18 @@ namespace ZombieDice
             List<IZombieDie> playerDice = new List<IZombieDie>(); // collection of the three dice player will roll
             IZombieDie tempDie;
             int seed;
+            string keepRolling = "";
 
             foreach (ZombieDicePlayer player in players)
             {
-                Console.WriteLine(player.giveName() + "'s Turn: ");
+                Console.WriteLine("---------- " + player.giveName() + "'s Turn ----------");
+                Console.WriteLine();
 
-                Console.WriteLine("Taking dice from cup: "); // TODO: think of a way to do this more cleanly
-                for (int i = 0; i < 3; i++) // take three dice from the cup
+takedice:       Console.WriteLine("Taking dice from cup: "); // TODO: think of a way to do this more cleanly
+               
+                while (playerDice.Count<3) // take dice from the cup unti player has 3
                 {
                     seed = Rand.Next(0, cup.Count);
-                    //Console.WriteLine(seed);
                     tempDie = cup.ElementAt(seed); // assign a random die from the cup as the die to roll
                     cup.RemoveAt(seed); // remove the die from the cup
                     playerDice.Add(tempDie);
@@ -151,6 +154,7 @@ namespace ZombieDice
                 foreach (IZombieDie die in playerDice)
                     die.DisplayType();
 
+                Console.WriteLine();
                 Console.WriteLine("Rolling dice...");
                 foreach (IZombieDie die in playerDice) // roll and "score" each die 
                 {
@@ -169,15 +173,91 @@ namespace ZombieDice
                     else // runner dice are not discarded
                         runnersRolled++;
                 }
-                Console.WriteLine("Brains: " + brainsRolled + "\t Shots: " + shotsRolled + "\t Runners: " + runnersRolled);
-
-                //clear data for next player
-                brainsRolled = 0;
-                shotsRolled = 0;
-                runnersRolled = 0;
-                playerDice.Clear();
                 Console.WriteLine();
+                Console.WriteLine("Brains: " + brainsRolled + "\t Shots: " + shotsRolled + "\t Runners: " + runnersRolled);
+                Console.WriteLine();
+
+                if (shotsRolled >= 3)// end turn for player if they've been shot 3 or more times
+                {
+                    Console.WriteLine(player.giveName() + " has been shot 3 or more times! " + player.giveName() + "'s turn is over!");
+                    Console.WriteLine("Press any key to continue...");
+                    Console.ReadLine();
+
+                    //clear data for next player
+                    keepRolling = "";
+                    brainsRolled = 0;
+                    shotsRolled = 0;
+                    runnersRolled = 0;
+                    playerDice.Clear();
+                    Console.WriteLine();
+                }
+
+                else
+                {
+                    while (keepRolling != "y" && keepRolling != "n")
+                    {
+                        Console.Write("Would you like to continue rolling (y), or to stop and score your brains (n)? :");
+                        keepRolling = Console.ReadLine();
+                    }
+
+                    switch (keepRolling)
+                    {
+                        case "y":
+                            //go back to rolling dice
+                            keepRolling = "";
+                            playerDice = removeNonRunners(playerDice);
+                            Console.WriteLine("Dice in playerDice (in game): ");
+                            foreach (IZombieDie die in playerDice)
+                                die.DisplayType();
+                            Console.WriteLine();
+                            goto takedice;
+                            break;
+
+                        case "n":
+                            player.AddToBank(brainsRolled);
+                            player.DisplayInfo();
+                            break;
+                        default:
+                            break;
+                    }
+
+                    //clear data for next player
+                    keepRolling = "";
+                    brainsRolled = 0;
+                    shotsRolled = 0;
+                    runnersRolled = 0;
+                    playerDice.Clear();
+                    Console.WriteLine();
+                }
+                
+            } // end of foreach loop
+
+        } // end of RunGame
+
+        public List<IZombieDie> removeNonRunners(List<IZombieDie> playerDice) // takes in rolled dice, and remove all dice except those rolled as runners
+            // doesn't currently properly pass saved dice back
+        {
+            Console.WriteLine("Removing Brains and Shots from Dice to be rolled...");
+            List<IZombieDie> temp = new List<IZombieDie>();
+            foreach (IZombieDie die in playerDice)
+            {
+                if (die.GetValueRolled() == ZombieDieValue.Runner)
+                    temp.Add(die);
             }
+            playerDice.Clear(); // remove all dice
+
+            Console.WriteLine("Dice to be saved: ");
+            foreach (IZombieDie die in temp)
+                die.DisplayType();
+            Console.WriteLine();
+
+            playerDice = temp; // put "saved" dice back in playerDice
+            Console.WriteLine("Dice in playerDice (in method): ");
+            foreach (IZombieDie die in playerDice)
+                die.DisplayType();
+            Console.WriteLine();
+            temp.Clear();
+            return playerDice;
         }
     }
 }

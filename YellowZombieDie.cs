@@ -60,6 +60,11 @@ namespace ZombieDice
         {
             Console.WriteLine("Yellow");
         }
+
+        public void DisplayInfo()
+        {
+            Console.WriteLine("Yellow: " + ValueRolled);
+        }
         #endregion
     }
 }

@@ -155,15 +155,16 @@ namespace ZombieDice
                 foreach (IZombieDie die in playerDice) // roll and "score" each die 
                 {
                     die.RollDie();
+                    die.DisplayInfo();
                     if (die.GetValueRolled() == ZombieDieValue.Brain)
                     {
                         brainsRolled++; 
-                        playerDice.Remove(die);
+                        //playerDice.Remove(die);
                     }
                     else if (die.GetValueRolled() == ZombieDieValue.Shot)
                     {
                         shotsRolled++;
-                        playerDice.Remove(die);
+                        //playerDice.Remove(die);
                     }
                     else // runner dice are not discarded
                         runnersRolled++;

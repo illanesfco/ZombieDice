@@ -12,5 +12,6 @@ namespace ZombieDice
         ZombieDieColor DieType();
         ZombieDieValue GetValueRolled();
         void DisplayType();
+        void DisplayInfo();
     }
 }

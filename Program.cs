@@ -14,9 +14,11 @@ namespace ZombieDice
         {
             Program myApp = new Program();
             Random rand = new Random();
-            Stack<IZombieDie> cup = new Stack<IZombieDie>(13); // creates a "dice cup" that contains at most 13 dice
+            List<IZombieDie> testcup = myApp.CupSetup();
             myApp.TestDice();
-            myApp.PopulateCup(cup);
+            List<ZombieDicePlayer> players = myApp.PlayerSetup();
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadLine();
         
         }
 
@@ -38,29 +40,30 @@ namespace ZombieDice
             Console.WriteLine();
         }
 
-        public void PopulateCup(Stack<IZombieDie> cup) 
-            // Fills the cup with a random proportion of green, yellow, and red zombie dice. The total number of dice in the cup is 13.
+        public List<IZombieDie> CupSetup()
         {
-            Console.WriteLine("Adding Dice to Cup...");
+            Console.WriteLine("Creating cup of dice...");
+            List<IZombieDie> cup = new List<IZombieDie>();
             int seed;
             for (int i = 0; i <= 12; i++)
             {
                 //Console.Write(i + 1 + " - ");
                 seed = Rand.Next(1, 4);
                 if (seed == 1)
-                    cup.Push(new RedZombieDie(Rand));
+                    cup.Add(new RedZombieDie(Rand));
                 else if (seed == 2)
-                    cup.Push(new YellowZombieDie(Rand));
+                    cup.Add(new YellowZombieDie(Rand));
                 else
-                    cup.Push(new GreenZombieDie(Rand));
-                
+                    cup.Add(new GreenZombieDie(Rand));
+
                 //Console.WriteLine();
             }
             Console.WriteLine("...done");
             DeclareDice(cup);
+            return cup;
         }
 
-        public void DeclareDice(Stack<IZombieDie> cup) //tells you how many of each die there is in the cup
+        public void DeclareDice(List<IZombieDie> cup) //tells you how many of each die there is in the cup
         {
             //Console.WriteLine("------------------------Declaring Contents of Dice Cup------------------------");
             int greenDice = 0, yellowDice = 0, redDice = 0;
@@ -79,6 +82,34 @@ namespace ZombieDice
             Console.WriteLine("Yellow Dice: " + yellowDice);
             Console.WriteLine("Red Dice: " + redDice);
             Console.WriteLine();
+        }
+
+        public List<ZombieDicePlayer> PlayerSetup() //sets up the players in the game
+        {
+            int numPlayers = 0;
+            do // validation loop
+            {
+                Console.Write("Please enter the number of players (2-8): ");
+                numPlayers = Int32.Parse(Console.ReadLine());
+            }
+            while (numPlayers < 2 || numPlayers > 8);
+                
+            ZombieDicePlayer newPlayer;
+            List<ZombieDicePlayer> playerList = new List<ZombieDicePlayer>();
+            for (int i = 0; i < numPlayers; i++)
+            {
+                Console.Write("Player " + (i + 1) + ", please enter your name: ");
+                newPlayer = new ZombieDicePlayer(Console.ReadLine());
+                playerList.Add(newPlayer);
+            }
+            DeclarePlayers(playerList);
+            return playerList;
+        }
+
+        public void DeclarePlayers(List<ZombieDicePlayer> playerList) // tells you the names of each player in the game
+        {
+            foreach (ZombieDicePlayer player in playerList)
+                player.DisplayName();
         }
 
     }
